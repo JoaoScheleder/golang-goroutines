@@ -118,11 +118,13 @@ func main() {
 			if err != nil {
 				fmt.Printf("Error closing producer: %v\n", err)
 			}
-			fmt.Printf("Total pizzas made: %d\n", pizzasMade)
-			fmt.Printf("Total pizzas failed: %d\n", pizzasFailed)
-			fmt.Printf("Total orders processed: %d\n", total)
+
 			break
 		}
 	}
+
+	fmt.Printf("Total pizzas made: %d\n", pizzasMade)
+	fmt.Printf("Total pizzas failed: %d\n", pizzasFailed)
+	fmt.Printf("Total orders processed: %d\n", total)
 
 }
