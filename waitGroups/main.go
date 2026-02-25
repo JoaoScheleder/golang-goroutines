@@ -10,7 +10,7 @@ func printSomething(s string, wg *sync.WaitGroup) {
 	fmt.Println(s)
 }
 
-func main() {
+func waitGroupsExample() {
 	var wg sync.WaitGroup
 
 	words := []string{"Hello", "World", "Go", "Programming"}
@@ -24,4 +24,12 @@ func main() {
 	wg.Wait()
 	wg.Add(1)
 	printSomething("Something else", &wg)
+}
+
+func main() {
+	waitGroupsExample()
+	fmt.Println("-------")
+	RaceCondition()
+	fmt.Println("-------")
+	RaceConditionFixedWithMutex()
 }
