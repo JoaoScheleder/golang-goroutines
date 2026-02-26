@@ -26,6 +26,9 @@ var eatTime = 1 * time.Second
 var thinkTime = 3 * time.Second
 var sleepTime = 1 * time.Second
 
+var orderMutex sync.Mutex
+var orderFinished []string
+
 func main() {
 	fmt.Println("Dining Philosophers Problem Simulation")
 	fmt.Println("-----------------------------------")
@@ -55,6 +58,11 @@ func dine() {
 		// fire go routines for each philosopher
 		go diningProblem(philosophers[i], forks, wg, seated)
 	}
+
+	wg.Wait() // wait for all philosophers to finish eating
+
+	fmt.Println("All philosophers have finished eating.")
+	fmt.Printf("Order of philosophers who finished: %v\n", orderFinished)
 }
 
 func diningProblem(philosopher Philosopher, forks map[int]*sync.Mutex, wg *sync.WaitGroup, seated *sync.WaitGroup) {
@@ -107,4 +115,10 @@ func diningProblem(philosopher Philosopher, forks map[int]*sync.Mutex, wg *sync.
 
 	// philosopher is satisfied and leaves the table
 	fmt.Printf("%s is satisfied and leaves the table.\n", philosopher.name)
+
+	orderMutex.Lock()
+	orderFinished = append(orderFinished, philosopher.name)
+	orderMutex.Unlock()
+
+	time.Sleep(sleepTime) // simulate leaving the table
 }
