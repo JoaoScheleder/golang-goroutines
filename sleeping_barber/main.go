@@ -38,7 +38,7 @@ func (b *BarberShop) addBarber(barber string) {
 			client, shopOpen := <-b.ClientsChan
 			if shopOpen {
 				if isSleeping {
-					fmt.Printf("Barber %d is waking up to cut client %d hair\n", b.NumberOfBarbers, client)
+					fmt.Printf("Barber %d is waking up to cut client %d hair\n", barber, client)
 					isSleeping = false
 				}
 				b.cutHair(barber, fmt.Sprintf("Client %d", client))
