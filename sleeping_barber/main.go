@@ -24,26 +24,27 @@ type BarberShop struct {
 
 func (b *BarberShop) addBarber(barber string) {
 	b.NumberOfBarbers++
+	barberID := b.NumberOfBarbers
 
 	go func() {
 		isSleeping := false
-		fmt.Printf("Barber %d is ready to cut hair, and are in the room to check for clients	\n", b.NumberOfBarbers)
+		fmt.Printf("Barber %d (%s) is ready to cut hair and checking for clients\n", barberID, barber)
 		for {
 			// if there are no clients, the barber goes to sleep
 			if len(b.ClientsChan) == 0 {
-				fmt.Printf("Barber %d is sleeping\n", b.NumberOfBarbers)
+				fmt.Printf("Barber %d (%s) is sleeping\n", barberID, barber)
 				isSleeping = true
 			}
 
 			client, shopOpen := <-b.ClientsChan
 			if shopOpen {
 				if isSleeping {
-					fmt.Printf("Barber %d is waking up to cut client %d hair\n", barber, client)
+					fmt.Printf("Barber %d (%s) is waking up to cut %s's hair\n", barberID, barber, client)
 					isSleeping = false
 				}
-				b.cutHair(barber, fmt.Sprintf("Client %d", client))
+				b.cutHair(barber, client)
 			} else {
-				b.sendBarberHome()
+				b.sendBarberHome(barberID, barber)
 
 			}
 		}
@@ -56,8 +57,8 @@ func (b *BarberShop) cutHair(barber, client string) {
 	fmt.Printf("Barber %s is done cutting hair of client %s\n", barber, client)
 }
 
-func (b *BarberShop) sendBarberHome() {
-	fmt.Printf("Barber %d is going home\n", b.NumberOfBarbers)
+func (b *BarberShop) sendBarberHome(barberID int, barber string) {
+	fmt.Printf("Barber %d (%s) is going home\n", barberID, barber)
 	b.BarbersDoneChan <- true
 }
 
@@ -73,16 +74,16 @@ func (b *BarberShop) closeShopForTheDay() {
 }
 
 func (b *BarberShop) addClient(client string) {
-	fmt.Println("Client arrived %d", client)
+	fmt.Printf("Client arrived: %s\n", client)
 	if b.Open {
 		select {
 		case b.ClientsChan <- client:
-			fmt.Printf("Client %d take a seat in the waiting room\n", client)
+			fmt.Printf("%s takes a seat in the waiting room\n", client)
 		default:
-			fmt.Printf("Shop is full, client %s is leaving\n", client)
+			fmt.Printf("Shop is full, %s is leaving\n", client)
 		}
 	} else {
-		fmt.Printf("Shop is closed, client %s is leaving\n", client)
+		fmt.Printf("Shop is closed, %s is leaving\n", client)
 	}
 }
 
